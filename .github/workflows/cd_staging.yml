@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: SSH Into server
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
+          echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/ssh_key
           chmod 600 ~/ssh_key
           ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@16.171.149.179 << 'EOF'
             cd week-25-ci-next-app/ && git pull
