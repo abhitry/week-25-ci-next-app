@@ -3,25 +3,16 @@ name: Deploy to staging
 on:
   push:
     branches: [main]
-
 jobs:
   redeploy_everything:
     runs-on: ubuntu-latest
     name: Deploying everything to the staging cluster
-
     steps:
       - run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
-          chmod 600 ~/ssh_key
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@16.171.149.179 << 'EOF'
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-            cd week-25-ci-next-app/
-            git pull
-            pnpm install
-            pnpm run build
-            pm2 restart fe_server
-            pm2 restart http_server
-            pm2 restart ws_server
-          EOF
+          mkdir -p /home/runner/.ssh
+          ls /home/runner/.ssh
+          touch /home/runner/.ssh/known_hosts
+          echo "${{ secrets.KNOWN_HOSTS }}" > /home/runner/.ssh/known_hosts
+          chmod 700 /home/runner/ssh_key
+          ssh -i ~/ssh_key root@64.227.147.124 -t "cd week-25-ci-next-app/ && git pull origin main && npm install -g pnpm && pnpm install && pnpm run build && pm2 restart fe-sever && pm2 restart http-sever && pm2 restart ws-sever"
